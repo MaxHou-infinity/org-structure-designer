@@ -1,0 +1,603 @@
+/* 全局样式 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+/* 职级颜色说明 */
+#levelLegend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.level-item {
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.level-item:hover {
+    transform: scale(1.05);
+}
+
+/* 组织架构图容器 */
+.org-chart-container {
+    min-height: 600px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    position: relative;
+    overflow: auto;
+    max-height: 70vh;
+    transition: all 0.3s ease;
+}
+
+/* 拖拽提示 */
+.drag-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #aaa;
+    font-size: 18px;
+    text-align: center;
+}
+
+/* 组织架构树样式 */
+.org-tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0;
+    position: relative;
+    transition: transform 0.3s ease;
+    transform-origin: top center;
+}
+
+.org-level {
+    width: 100%;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.level-departments {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    position: relative;
+    width: 100%;
+}
+
+/* 部门样式 */
+.department {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    width: 240px;
+}
+
+.department:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.department.connector:before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background-color: #aaa;
+    transform: translateX(-50%);
+}
+
+.department-header {
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.department-name {
+    font-weight: 600;
+    flex-grow: 1;
+    cursor: text;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+.department-name:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.department-toggle {
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    transition: background-color 0.2s ease;
+}
+
+.department-toggle:hover {
+    background-color: #dee2e6;
+}
+
+.department-leader {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #6c757d;
+    border-bottom: 1px solid #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.department-leader:hover {
+    background-color: #f8f9fa;
+}
+
+.department-children {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 0 0 5px 5px;
+}
+
+/* 水平连接线 */
+.horizontal-connector {
+    position: absolute;
+    height: 2px;
+    background-color: #aaa;
+    top: -10px;
+}
+
+/* 员工样式 */
+.employees-container {
+    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.employee {
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: inline-block;
+    margin: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: move;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.employee:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.employee.dragging {
+    opacity: 0.7;
+    transform: scale(1.05);
+    z-index: 1000;
+}
+
+.employee-name {
+    font-weight: 600;
+}
+
+.employee-level {
+    font-size: 10px;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* 拖拽目标样式 */
+.drag-over {
+    background-color: rgba(0, 123, 255, 0.1);
+    border: 2px dashed #007bff;
+}
+
+/* 回收站样式 */
+.trash-zone {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    border: 2px dashed #dc3545;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #dc3545;
+    font-size: 24px;
+    z-index: 1000;
+    display: none;
+}
+
+.trash-zone.active {
+    background-color: rgba(220, 53, 69, 0.2);
+}
+
+.trash-zone span {
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+/* 右键菜单样式 */
+.context-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    min-width: 160px;
+    overflow: hidden;
+}
+
+.context-menu-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 14px;
+}
+
+.context-menu-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* 虚拟员工样式 */
+.employee.virtual {
+    border: 1px dashed #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.employee.virtual .employee-name:after {
+    content: ' (虚拟)';
+    font-size: 9px;
+    color: #0d6efd;
+}
+
+/* 部门颜色 */
+.level-1 {
+    background-color: rgba(0, 191, 255, 0.2);
+    border-color: #00bfff;
+}
+
+.level-2 {
+    background-color: rgba(144, 238, 144, 0.2);
+    border-color: #90ee90;
+}
+
+.level-3 {
+    background-color: rgba(255, 182, 193, 0.2);
+    border-color: #ffb6c1;
+}
+
+.level-4 {
+    background-color: rgba(255, 218, 185, 0.2);
+    border-color: #ffdab9;
+}
+
+.level-5 {
+    background-color: rgba(216, 191, 216, 0.2);
+    border-color: #d8bfd8;
+}
+
+.level-6 {
+    background-color: rgba(173, 216, 230, 0.2);
+    border-color: #add8e6;
+}
+
+/* 折叠状态 */
+.collapsed-children {
+    display: none;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .department {
+        min-width: 180px;
+    }
+    
+    .employee {
+        min-width: 110px;
+    }
+}
+
+/* 骨架屏动画 */
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 8px;
+}
+
+/* 错误提示动画 */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    20%, 60% {
+        transform: translateX(-5px);
+    }
+    40%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+.shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+/* 工具提示 */
+.tooltip-card {
+    position: absolute;
+    background-color: rgba(33, 37, 41, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* 搜索结果高亮 */
+.match-highlight {
+    background-color: #fff3cd;
+    font-weight: bold;
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* 自定义滚动条 */
+.org-chart-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.org-chart-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.org-chart-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.org-chart-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* 卡片样式美化 */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eaeaea;
+    padding: 12px 16px;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+/* 按钮样式美化 */
+.btn {
+    border-radius: 5px;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+.btn-success:hover {
+    background-color: #157347;
+    border-color: #146c43;
+}
+
+.btn-info {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+    color: #000;
+}
+
+.btn-info:hover {
+    background-color: #31d2f2;
+    border-color: #25cff2;
+    color: #000;
+}
+
+.btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+/* 表单控件样式 */
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 8px 12px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 提示框样式 */
+.toast-container {
+    z-index: 1100;
+}
+
+.toast {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 加载提示样式 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top: 5px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+.loading-message {
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    max-width: 80%;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 消息提示样式 */
+.alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    min-width: 300px;
+    max-width: 80%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-weight: 500;
+}
+
+/* 部门名称编辑输入框 */
+.edit-name-input {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: inherit;
+    font-weight: 600;
+    outline: none;
+}
+
+.edit-name-input:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* 员工搜索结果样式 */
+#employeeSearchResults {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.list-group-item {
+    cursor: pointer;
+}
+
+/* 标题样式 */
+header {
+    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    border-bottom: 1px solid #dee2e6;
+}
+
+header .fa-sitemap {
+    color: #0d6efd;
+    font-size: 28px;
+}
+
+header .fs-4 {
+    font-weight: 600;
+    color: #212529;
+}
+
+/* 缩放按钮样式 */
+#zoomInBtn, #zoomOutBtn, #resetZoomBtn {
+    padding: 4px 8px;
+    font-size: 14px;
+} 
